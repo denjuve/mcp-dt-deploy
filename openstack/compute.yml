@@ -1,0 +1,128 @@
+classes:
+- system.linux.system.repo.mcp.openstack
+- system.linux.system.repo.mcp.extra
+- system.linux.system.repo.saltstack.xenial
+- system.linux.network.hosts
+# new_contrail_repo ##
+- system.linux.system.repo.mcp.contrail
+# end_new_contrail_repo ##
+
+- system.nova.compute.cluster
+
+## old_neutron
+#- system.neutron.compute.cluster
+## end_old_neutron
+
+## new_ceph
+#- system.nova.compute.storage.ceph
+#- system.ceph.common.cluster
+## end_ceph
+
+# new_contrail
+#- system.opencontrail.compute.cluster4_0
+- system.opencontrail.compute.cluster
+- system.opencontrail.client.cluster
+- system.opencontrail.client.resource.virtual_router
+#- service.opencontrail.compute.cluster
+# end_contrail
+
+## new_ceph
+#- cluster.os-ha-ovs.ceph.common
+## end new
+
+- cluster.os-ha-ovs
+
+#- cluster.os-ha-ovs.infra
+parameters:
+  _param:
+    primary_interface: ens4
+    tenant_interface: ens5
+    external_interface: ens6
+    interface_mtu: 1450
+    linux_system_codename: xenial
+    opencontrail_compute_gateway: 172.16.10.1
+    opencontrail_compute_address: ${_param:single_address}
+    opencontrail_compute_iface: ${_param:primary_interface}
+  nova:
+    compute:
+      cpu_mode: none
+      vncproxy_url: http://${_param:cluster_vip_address}:6080
+      notification:
+        driver: messagingv2
+        topics: "notifications"
+        notify_on:
+          state_change: vm_and_task_state
+      message_queue:
+        members:
+          - host: ${_param:openstack_control_node01_address}
+          - host: ${_param:openstack_control_node02_address}
+          - host: ${_param:openstack_control_node03_address}
+      identity:
+        protocol: https
+      network:
+        protocol: https
+      glance:
+        protocol: https
+      image:
+        protocol: https
+# new_contrail
+  opencontrail:
+    common:
+      network:
+        host: ${_param:openstack_control_address}
+# end_new_contrail
+  linux:
+    network:
+      bridge: openvswitch
+      concat_iface_files:
+      - src: '/etc/network/interfaces.d/50-cloud-init.cfg'
+        dst: '/etc/network/interfaces'
+      interface:
+        dhcp_int:
+          enabled: true
+          name: ens3
+          proto: dhcp
+          type: eth
+          mtu: ${_param:interface_mtu}
+        primary_interface:
+          enabled: true
+          ipflush_onchange: true
+          name: ${_param:primary_interface}
+          mtu: ${_param:interface_mtu}
+          proto: manual
+          type: eth
+        tenant_interface:
+          enabled: true
+          ipflush_onchange: true
+          name: ${_param:tenant_interface}
+          mtu: ${_param:interface_mtu}
+          proto: manual
+          type: eth
+        vhost0:
+          enabled: true
+          type: eth
+          mtu: ${_param:interface_mtu}
+          address: ${_param:single_address}
+          netmask: '255.255.255.0'
+          pre_up_cmds:
+          - /usr/lib/contrail/if-vhost0
+          use_interfaces:
+          - ens4
+## old_neutron
+#        br-mgmt:
+#          enabled: true
+#          type: bridge
+#          proto: static
+#          address: ${_param:single_address}
+#          netmask: 255.255.255.0
+#          use_interfaces:
+#          - ${_param:primary_interface}
+#        br-mesh:
+#          enabled: true
+#          type: bridge
+#          proto: static
+#          address: ${_param:tenant_address}
+#          netmask: 255.255.255.0
+#          use_interfaces:
+#          - ${_param:tenant_interface}
+## end_new_neutron

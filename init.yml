@@ -1,0 +1,22 @@
+classes:
+- system.linux.network.dynamic_hosts
+- system.linux.system.single
+- system.openssh.server.team.lab
+- system.openssh.server.team.tcpcloud
+- system.openssh.server.team.mcp_qa
+- system.openssh.server.team.services
+- cluster.overrides
+- cluster.os-ha-ovs.infra
+- cluster.os-ha-ovs.openstack
+# # new
+#- cluster.os-ha-ovs.ceph
+- cluster.os-ha-ovs.opencontrail   #++
+# #end new
+
+parameters:
+  _param:
+    salt_minion_ca_host: cfg01.${linux:system:domain}
+  salt:
+    minion:
+      trusted_ca_minions:
+        - cfg01.${linux:system:domain}
