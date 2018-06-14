@@ -1,7 +1,0 @@
-#    ceph/cephfs
-# adding ceph
-#
-classes:
-- system.linux.system.repo.mcp.apt_mirantis.ubuntu
-- cluster.os-ha-ovs
-~                      

@@ -35,17 +35,10 @@ classes:
 - system.reclass.storage.system.openstack_control_cluster
 - system.reclass.storage.system.openstack_database_cluster
 ## new
-#- system.reclass.storage.system.ceph_rgw_cluster
 #- system.reclass.storage.system.ceph_mon_cluster
-########
-- system.reclass.storage.system.opencontrail_control_cluster # ++
-- system.reclass.storage.system.opencontrail_analytics_cluster
-
-########
-#- cluster.os-ha-ovs.ceph
-## end
 #- system.reclass.storage.system.openstack_gateway_single
 #- system.reclass.storage.system.openstack_compute_multi
+## end
 - cluster.os-ha-ovs.openstack.proxy
 - cluster.os-ha-ovs
 parameters:
@@ -128,95 +121,38 @@ parameters:
               value_template: <<node_tenant_ip>>
             external_address:
               value_template: <<node_external_ip>>
-#        openstack_gateway:
-#          expression: <<node_hostname>>__startswith__gtw
-#          node_class:
-#            value_template:
-#              - cluster.<<node_cluster>>.openstack.gateway
-#          node_param:
-#            tenant_address:
-#              value_template: <<node_tenant_ip>>
-#            external_address:
-#              value_template: <<node_external_ip>>
-#          cluster_param:
-#            openstack_gateway_node01_address:
-#              value_template: <<node_control_ip>>
-##CONTRAIL
-        opencontrail_control01:
-          expression: <<node_hostname>>__equals__ntw01
+        openstack_gateway:
+          expression: <<node_hostname>>__startswith__gtw
+          node_class:
+            value_template:
+              - cluster.<<node_cluster>>.openstack.gateway
+          node_param:
+            tenant_address:
+              value_template: <<node_tenant_ip>>
+            external_address:
+              value_template: <<node_external_ip>>
           cluster_param:
-            opencontrail_control_node01_address:
+            openstack_gateway_node01_address:
               value_template: <<node_control_ip>>
-        opencontrail_control02:
-          expression: <<node_hostname>>__equals__ntw02
-          cluster_param:
-            opencontrail_control_node02_address:
-              value_template: <<node_control_ip>>
-        opencontrail_control03:
-          expression: <<node_hostname>>__equals__ntw03
-          cluster_param:
-            opencontrail_control_node03_address:
-              value_template: <<node_control_ip>>
-
-        opencontrail_analytics01:
-          expression: <<node_hostname>>__equals__nal01
-          cluster_param:
-            opencontrail_analytics_node01_address:
-              value_template: <<node_control_ip>>
-        opencontrail_analytics02:
-          expression: <<node_hostname>>__equals__nal02
-          cluster_param:
-            opencontrail_analytics_node02_address:
-              value_template: <<node_control_ip>>
-        opencontrail_analytics03:
-          expression: <<node_hostname>>__equals__nal03
-          cluster_param:
-            opencontrail_analytics_node03_address:
-              value_template: <<node_control_ip>>
-
-## CEPH
-#        ceph_osd_node01:
-#          expression: <<node_hostname>>__equals__osd01
-#          cluster_param:
-#            ceph_osd_node01_address:
-#              value_template: <<node_control_ip>>
-#        ceph_osd_node02:
-#          expression: <<node_hostname>>__equals__osd02
-#          cluster_param:
-#            ceph_osd_node02_address:
-#              value_template: <<node_control_ip>>
-#        ceph_mon_node01:
-#          expression: <<node_hostname>>__equals__cmn01
-#          cluster_param:
-#            ceph_mon_node01_address:
-#              value_template: <<node_control_ip>>
-#        ceph_mon_node02:
-#          expression: <<node_hostname>>__equals__cmn02
-#          cluster_param:
-#            ceph_mon_node02_address:
-#              value_template: <<node_control_ip>>
-#        ceph_mon_node03:
-#          expression: <<node_hostname>>__equals__cmn03
-#          cluster_param:
-#            ceph_mon_node03_address:
-#              value_template: <<node_control_ip>>
-
-
       node:
         openstack_control_node01:
+#          classes:
+#          - service.galera.master.cluster
           params:
+#            mysql_cluster_role: master
             linux_system_codename: xenial
         openstack_control_node02:
+#          classes:
+#          - service.galera.slave.cluster
           params:
+#            mysql_cluster_role: slave
             linux_system_codename: xenial
         openstack_control_node03:
+#          classes:
+#          - service.galera.slave.cluster
           params:
+#            mysql_cluster_role: slave
             linux_system_codename: xenial
-
-
-#        openstack_contrail_node01:
-
-
         openstack_database_node01:
           classes:
           - service.galera.master.cluster
@@ -236,46 +172,3 @@ parameters:
           params:
             mysql_cluster_role: slave
             linux_system_codename: xenial
-
-#        ceph_mon_node01:
-#          params:
-#            linux_system_codename: xenial
-#        ceph_mon_node02:
-#          params:
-#            linux_system_codename: xenial
-#        ceph_mon_node03:
-#          params:
-#            linux_system_codename: xenial
-#
-#        infra_storage_rack01:
-#          name: osd0<<count>>
-#          domain: ${_param:cluster_domain}
-#          classes:
-#          - cluster.${_param:cluster_name}.ceph.osd
-#          - cluster.${_param:cluster_name}.ceph
-#          - cluster.${_param:cluster_name}
-#          repeat:
-#            count: 2
-#            start: 1
-#            digits: 1 
-#            params:
-#              single_address:
-#                value: ceph_osd_node0<<count>>_address
-#                start: 1
-#                digits: 1
-#                interpolate: true
-#          params:
-#            ceph_crush_parent: rack01
-#            salt_master_host: ${_param:reclass_config_master}
-#            linux_system_codename: xenial
-
-
-#        opencontrail_control_node01:
-#          params:
-#            linux_system_codename: xenial
-#        opencontrail_control_node02:
-#          params:
-#            linux_system_codename: xenial
-#        opencontrail_control_node03:
-#          params:
-#            linux_system_codename: xenial

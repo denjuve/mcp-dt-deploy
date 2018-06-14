@@ -12,13 +12,11 @@ parameters:
     openstack_control_node01_address: 172.16.10.94
     openstack_control_node02_address: 172.16.10.93
     openstack_control_node03_address: 172.16.10.92
-## old_neutron
-#    openstack_gateway_hostname: gtw
-#    openstack_gateway_address: ${_param:openstack_gateway_node01_address}
-#    openstack_gateway_node01_hostname: gtw01
-#    openstack_gateway_node01_address: 172.16.10.95
+    openstack_gateway_hostname: gtw
+    openstack_gateway_address: ${_param:openstack_gateway_node01_address}
+    openstack_gateway_node01_hostname: gtw01
+    openstack_gateway_node01_address: 172.16.10.94
 #    openstack_database_address: ${_param:openstack_control_address}
-## end_old
     openstack_message_queue_address: ${_param:openstack_control_address}
     openstack_message_queue_node01_address: ${_param:openstack_control_node01_address}
     openstack_message_queue_node02_address: ${_param:openstack_control_node02_address}
@@ -33,25 +31,16 @@ parameters:
     openstack_database_node02_address: 172.16.10.100 
     openstack_database_node03_address: 172.16.10.101
 
-#new_ceph
-#    ceph_osd_node01_address: 172.16.10.119
-#    ceph_osd_node02_address: 172.16.10.120
-#    ceph_mon_node01_address: 172.16.10.116
-#    ceph_mon_node02_address: 172.16.10.117
-#    ceph_mon_node03_address: 172.16.10.118
+##new
+#    ceph_osd_node01_address: 172.16.10.116
+#    ceph_osd_node02_address: 172.16.10.115
+#    ceph_mon_node01_address: 172.16.10.111
+#    ceph_mon_node02_address: 172.16.10.112
+#    ceph_mon_node03_address: 172.16.10.113
 #
-#    cinder_storage_secret_uuid: "7e84ffc6-512f-4c0f-b2b7-df67cce14bb7"   #? assign or pass
-#    nova_storage_secret_uuid: "6e84ffc6-512f-4c0f-b2b7-df67cce14bb6"     #? assign or pass
-#    nova_storage_pool: vms
-#    nova_storage_user: nova
-#    cinder_storage_pool: volumes
-#    cinder_storage_user: cinder
-#    glance_storage_pool: images
-#    glance_storage_user: glance
-#
-#end_new_ceph
+##end new
 
-    loopback_device_size: 20
+
     openstack_version: ocata
     apt_mk_version: nightly
     mcp_repo_version: 1.1
@@ -60,11 +49,6 @@ parameters:
     cluster_public_protocol: https
     cluster_internal_protocol: https
     cluster_public_host: ${_param:openstack_proxy_address}
-# new_contrail
-    opencontrail_version: 3.0
-    opencontrail_compute_dns: 8.8.8.8
-    opencontrail_stats_password: workshop
-# end_new
     keystone_service_protocol: ${_param:cluster_internal_protocol}
     glance_service_protocol: ${_param:cluster_internal_protocol}
     nova_service_protocol: ${_param:cluster_internal_protocol}
@@ -73,18 +57,16 @@ parameters:
     cinder_service_protocol: ${_param:cluster_internal_protocol}
     designate_service_protocol: ${_param:cluster_internal_protocol}
     neutron_public_protocol: http
-## old_neutron
-#    neutron_control_dvr: False
-#    neutron_tenant_network_types: "flat,vxlan" 
-#    neutron_l3_ha: False
-#    neutron_global_physnet_mtu: 1450
-#    neutron_external_mtu: 1450
-#    neutron_gateway_dvr: False
-#    neutron_gateway_agent_mode: legacy
-#    neutron_compute_dvr: False
-#    neutron_compute_agent_mode: legacy
-#    neutron_compute_external_access: False
-## end_old
+    neutron_control_dvr: False
+    neutron_tenant_network_types: "flat,vxlan"
+    neutron_l3_ha: False
+    neutron_global_physnet_mtu: 1500
+    neutron_external_mtu: 1500
+    neutron_gateway_dvr: False
+    neutron_gateway_agent_mode: legacy
+    neutron_compute_dvr: False
+    neutron_compute_agent_mode: legacy
+    neutron_compute_external_access: False
     galera_server_cluster_name: openstack_cluster
     galera_server_maintenance_password: workshop
     galera_server_admin_password: workshop
@@ -164,13 +146,13 @@ parameters:
     keystone_neutron_password: workshop
     keystone_nova_password: workshop
     keystone_designate_password: workshop
-    rgw_keepalived_vip_password_generated: workshop
     horizon_version: ${_param:openstack_version}
     horizon_secret_key: opaesee8Que2yahJoh9fo0eefo1Aeyo6ahyei8zeiboh3aeth5loth7ieNa5xi5e
     horizon_identity_host: ${_param:cluster_vip_address}
     horizon_identity_encryption: none
     horizon_identity_version: 2
     nginx_proxy_openstack_api_proxy_host: ${_param:cluster_vip_address}
+    loopback_device_size: 20
   linux:
     network:
       host:
@@ -204,18 +186,16 @@ parameters:
           names:
           - ${_param:openstack_control_node03_hostname}
           - ${_param:openstack_control_node03_hostname}.${_param:cluster_domain}
-## old_neutron
-#        gtw:
-#          address: ${_param:openstack_gateway_address}
-#          names:
-#          - ${_param:openstack_gateway_hostname}
-#          - ${_param:openstack_gateway_hostname}.${_param:cluster_domain}
-#        gtw01:
-#          address: ${_param:openstack_gateway_address}
-#          names:
-#          - ${_param:openstack_gateway_hostname}
-#          - ${_param:openstack_gateway_hostname}.${_param:cluster_domain}
-## end_old
+        gtw:
+          address: ${_param:openstack_gateway_address}
+          names:
+          - ${_param:openstack_gateway_hostname}
+          - ${_param:openstack_gateway_hostname}.${_param:cluster_domain}
+        gtw01:
+          address: ${_param:openstack_gateway_address}
+          names:
+          - ${_param:openstack_gateway_hostname}
+          - ${_param:openstack_gateway_hostname}.${_param:cluster_domain}
         dbs01:
           address: ${_param:openstack_database_node01_address}
           names:
@@ -231,24 +211,3 @@ parameters:
           names:
           - ${_param:openstack_database_node03_hostname}
           - ${_param:openstack_database_node03_hostname}.${_param:cluster_domain}
-
-        nal01:
-          address: ${_param:opencontrail_analytics_node01_address}
-          names:
-          - ${_param:opencontrail_analytics_node01_hostname}
-          - ${_param:opencontrail_analytics_node01_hostname}.${_param:cluster_domain}
-        nal02:
-          address: ${_param:opencontrail_analytics_node02_address}
-          names:
-          - ${_param:opencontrail_analytics_node02_hostname}
-          - ${_param:opencontrail_analytics_node02_hostname}.${_param:cluster_domain}
-        nal03:
-          address: ${_param:opencontrail_analytics_node03_address}
-          names:
-          - ${_param:opencontrail_analytics_node03_hostname}
-          - ${_param:opencontrail_analytics_node03_hostname}.${_param:cluster_domain}
-        nal:
-          address: ${_param:opencontrail_analytics_address}
-          names:
-          - ${_param:opencontrail_analytics_hostname}
-          - ${_param:opencontrail_analytics_hostname}.${_param:cluster_domain}
